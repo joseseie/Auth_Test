@@ -54,6 +54,7 @@ class RegisterController extends Controller
         ]);
     }
 
+
     /**
      * Create a new user instance after a valid registration.
      *
@@ -62,10 +63,25 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $confirmation_code = str_random(30);
+
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'confirmation_code' => $confirmation_code
         ]);
+
+        Mail::send('email.verify', $confirmation_code, function($message) {
+            $message->to(Input::get('email'), Input::get('username'))
+                ->subject('Verify your email address');
+        });
+
+        Flash::message('Thanks for signing up! Please check your email.');
+
+        // return Redirect::home();
+        return $user;
     }
+
+    
 }
