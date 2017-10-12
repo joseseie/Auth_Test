@@ -20,8 +20,13 @@ Route::get('/', function () {
         $user = \App\User::find(1);
     }
 
+//    $user->notify(new App\Notifications\PostNotification());
 
-    Notification::send($user,new App\Notifications\RegisterNotification($user));
+    $user = \App\User::get();
+
+    Notification::send($user, new App\Notifications\PostNotification());
+
+//    Notification::send($user,new App\Notifications\RegisterNotification($user));
     return view('welcome');
 });
 
@@ -33,3 +38,7 @@ Route::get('register/verify/{confirmationCode}', [
     'as' => 'confirmation_path',
     'uses' => 'RegistrationController@confirm'
 ]);
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -82,12 +82,12 @@ class RegisterController extends Controller
             
             // Mail::to($user->email)->send($email);
 
-            Mail::send('email.verify', $confirmation_code, function($message) {
-                $message->to($data['email'], $data['name'])
-                    ->subject('Verify your email address');
-            });
-    
-            Flash::message('Thanks for signing up! Please check your email.');
+//            Mail::send('email.verify', $confirmation_code, function($message) {
+//                $message->to($data['email'], $data['name'])
+//                    ->subject('Verify your email address');
+//            });
+//
+//            Flash::message('Thanks for signing up! Please check your email.');
 
             DB::commit();
             // return back();
@@ -106,7 +106,7 @@ class RegisterController extends Controller
         
 
         // return Redirect::home();
-        return "<h1>Utilizador criado. verifique o configo de confirmacao que lhe foi enviado</h1>";
+//        return "<h1>Utilizador criado. verifique o configo de confirmacao que lhe foi enviado</h1>";
         return $user;
     }
 
