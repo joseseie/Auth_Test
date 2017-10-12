@@ -32,7 +32,7 @@ class PostNotification extends Notification
         return ['database'];
     }
 
-    public function toDatanase() {
+    public function toDatabase() {
         return [
             'id' => 1,
             'title' => 'This is post Title',

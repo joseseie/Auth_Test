@@ -20,19 +20,14 @@ Route::get('/', function () {
         $user = \App\User::find(1);
     }
 
-    $user->notifications()->delete();
+//    $user->notifications()->delete();
 
-    foreach ($user->notifications as $n) {
-//        $n->markAsRead();
-//        $n->markAsRead();
-        dd($n);
-    }
 //    $user->notify(new App\Notifications\PostNotification());
 
 //    $user = \App\User::get();
 //    Notification::send($user, new App\Notifications\PostNotification());
 
-//    Notification::send($user,new App\Notifications\RegisterNotification($user));
+    Notification::send($user,new App\Notifications\RegisterNotification($user));
     return view('welcome');
 });
 
