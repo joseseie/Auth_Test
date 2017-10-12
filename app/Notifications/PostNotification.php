@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,16 +10,15 @@ use Illuminate\Notifications\Messages\MailMessage;
 class PostNotification extends Notification
 {
     use Queueable;
-    public $post;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Post $post)
+    public function __construct()
     {
-        $this->post = $post;
+        //
     }
 
     /**
@@ -36,9 +34,9 @@ class PostNotification extends Notification
 
     public function toDatanase() {
         return [
-            'id' => $this->post->id,
+            'id' => 1,
             'title' => 'This is post Title',
-            'data' => $this->post->created_at
+            'data' => date('y')
         ];
     }
 
