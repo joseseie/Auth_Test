@@ -27,7 +27,7 @@ Route::get('/', function () {
 //    $user = \App\User::get();
 //    Notification::send($user, new App\Notifications\PostNotification());
 
-    Notification::send($user,new App\Notifications\RegisterNotification($user));
+//    Notification::send($user,new App\Notifications\RegisterNotification($user));
     return view('welcome');
 });
 
