@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use App\Jobs\SendVerificationEmail;
+
 
 class RegisterController extends Controller
 {
@@ -59,6 +63,7 @@ class RegisterController extends Controller
 
 
     /**
+     * new method
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
@@ -66,49 +71,42 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $confirmation_code = str_random(30);
-
-        DB::beginTransaction();
-        try
-        {
-            $user = User::create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'password' => bcrypt($data['password']),
-                'confirmation_code' => $confirmation_code
-            ]);
-            // After creating the user send an email with the random token generated in the create method above
-            // $email = new EmailVerification(new User(['email_token' => $user->email_token, 'name' => $user->name]));
-            
-            // Mail::to($user->email)->send($email);
-
-//            Mail::send('email.verify', $confirmation_code, function($message) {
-//                $message->to($data['email'], $data['name'])
-//                    ->subject('Verify your email address');
-//            });
-//
-//            Flash::message('Thanks for signing up! Please check your email.');
-
-            DB::commit();
-            // return back();
-        
-        }
-        catch(Exception $e)
-        {
-            
-            DB::rollback(); 
-            return "Ocorreu um erro:";
-            return back();
-        }
-
-        
-
-        
-
-        // return Redirect::home();
-//        return "<h1>Utilizador criado. verifique o configo de confirmacao que lhe foi enviado</h1>";
-        return $user;
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
+            'email_token' => base64_encode($data['email'])
+        ]);
     }
+
+    /**
+     * new method
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function register(Request $request)
+    {
+        $this->validator($request->all())->validate();
+        event(new Registered($user = $this->create($request->all())));
+        dispatch(new SendVerificationEmail($user));
+
+        return view('verification');
+    }
+
+    /**
+     * new method
+     * @param $token
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function verify($token)
+    {
+        $user = User::where('email_token', $token)->first();
+        $user->verified = 1;
+        if ($user->save()) {
+            return view('emailconfirm', ['user' => $user]);
+        }
+    }
+
 
     public function confirm($confirmation_code)
     {

@@ -31,6 +31,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//Novo
+Route::get('/verifyemail/{token}','Auth\RegisterController@verify');
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
